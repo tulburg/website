@@ -8,7 +8,7 @@ module.exports = {
   mode: 'development',
   entry: [
     'webpack-hot-middleware/client?path=/__webpack_hmr&overlay=true&timeout=20000',
-    path.resolve(__dirname, './core/instance.ts')
+    path.resolve(__dirname, 'node_modules/@js-native/core/instance.ts')
   ],
   devtool: 'source-map',
   watch: true,
@@ -19,7 +19,7 @@ module.exports = {
     alias: {
       '@src': path.resolve(__dirname, 'src'),
       '@assets': path.resolve(__dirname, 'src/assets'),
-      '@core': path.resolve(__dirname, 'node_modules/@js-native/lib/core')
+      '@core': path.resolve(__dirname, 'node_modules/@js-native/core')
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx']
   },

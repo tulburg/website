@@ -1,6 +1,5 @@
 import App from './app';
-import Checklist from './checklist';
-import { Style } from '../core/components';
+import { Style } from '@js-native/core/components';
 
 export default {
   theme: {
@@ -11,6 +10,9 @@ export default {
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
         fontSize: 12
       },
+      body: {
+        backgroundColor: '#1b1b1b'
+      }
     },
     color: {
       background: '#f0f0f0',
@@ -24,9 +26,7 @@ export default {
     }
   },
   routes: [
-    { path: '/', component: App, name: 'Home' },
-    {
-      path: '/checklist', component: Checklist, name: 'Checklist',
+    { path: '/', component: App, name: 'Home',
       subs: [
         { path: '/list/:id', component: App, name: 'App' },
         { path: '/maps', component: App, name: 'App' }
