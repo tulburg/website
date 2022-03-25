@@ -1,6 +1,7 @@
-import {Container, Style, A, EM, P, H4} from "@js-native/core/components"
+import {Container, Style, A, EM, P, H4, Animation} from "@js-native/core/components"
 import {Color} from "@js-native/core/types";
 import {Link} from "./config";
+import './assets/css/ms.css';
 
 export default {
   globals: {
@@ -61,9 +62,22 @@ export class TopLink extends A {
 export class IconLink extends Container {
   constructor(footerLink: Link) {
     super();
-    this.display('inline-flex').addChild(
-      new EM().addClassName(footerLink.icon),
-      new TopLink(footerLink, { new_tab: true })
+    this.display('inline-flex').alignItems('center').addChild(
+      new EM().addClassName(footerLink.icon)
+        .color(Theme.colors.text).fontSize(24).marginRight(16)
+        .transition('all .2s ease-in-out').pseudo({
+          ':before': { marginLeft: 0 }
+        }),
+      new TopLink(footerLink, { new_tab: true }).on({
+        mousemove: function() {
+          this.node().previousSibling.style.transform = 'translateX(12px)';
+          this.node().previousSibling.style.color = Theme.colors.white;
+        },
+        mouseout: function() {
+          this.node().previousSibling.style.transform = 'translateX(0) scale(1)'
+          this.node().previousSibling.style.color = Theme.colors.text;
+        }
+      })
     )
   }
 }
@@ -71,7 +85,7 @@ export class IconLink extends Container {
 export class LeftPane extends Container {
   constructor(links: Link[]) {
     super();
-    const topLinks = new Container().height(160)
+    const topLinks = new Container().height(200)
       .display('flex').flexDirection('column');
     links.forEach(link => {
       if(link.name === 'interview') topLinks.addChild(
@@ -81,10 +95,26 @@ export class LeftPane extends Container {
         new TopLink(link).color(Theme.colors.white)
       )
     });
-    const arrows = new Container().height('100%').addChild(
-      new EM().addClassName('icon-arrow-right'),
-      new EM().addClassName('icon-arrow-right').addClassName('right')
-    );
+    const arrowStyles = new Style({
+      fontSize: 32, color: Theme.colors.text
+    }).pseudo({
+      ':before': {
+        marginLeft: 0
+      }
+    });
+    const arrowAnim = new Animation({
+      '0%': { transform: 'translateX(4px)' },
+      '50%': { transform: 'translateX(8px) scale(0.8)' },
+      '100%': { transform: 'translateX(12px)'}
+    });
+    const arrows = new Container()
+      .position('relative').height('100%').addChild(
+        new EM().addClassName('icon-arrow').marginLeft(-8).styles(arrowStyles),
+        new EM().addClassName('icon-arrow').opacity('0.7')
+          .marginLeft(-32).styles(arrowStyles).position('relative')
+          .display('inline-block')
+          .animation(arrowAnim.name + ' 1s cubic-bezier(0, 0.5, 0.1, 0.25) infinite forwards ')
+      );
     this.display('flex').flexDirection('column')
       .addChild(topLinks, arrows);
   }
@@ -94,12 +124,28 @@ export class LeftPane extends Container {
 export class Footer extends Container {
   constructor() {
     super();
-    this.display('grid').gridTemplateColumns('440px auto')
-    .addChild(
-      new H4().text('Tolu Oluwagbemi').fontSize(20)
+    const footerTextStyle = new Style({
+      color: Theme.colors.text, fontSize: 12, maxWidth: 150
+    })
+    this.addChild(
+      new H4().text('Tolu Oluwagbemi').fontSize(20).fontWeight('500')
         .color(Theme.colors.white).marginBottom(32).gridArea('1/1/3/3'),
-      ...Config.footerLinks.map((link: Link) => new IconLink(link)),
-      new P().text(Config.copyrightText), new P().text(Config.statusText)
+      new Container().display('grid').gridTemplateColumns('440px auto')
+        .gap(8)
+        .addChild(
+          ...Config.footerLinks.map((link: Link) => {
+            if(link.name.match('@')) return new IconLink(link).global({
+              'em': { visibility: 'hidden' }
+            })
+            else return new IconLink(link)
+          }),
+        ),
+      new Container().display('grid').gridTemplateColumns('440px auto')
+        .marginTop(150).gap(8)
+        .addChild(
+          new P().text(Config.copyrightText).styles(footerTextStyle), 
+          new P().text(Config.statusText).styles(footerTextStyle)
+        )
     )
   }
 }
