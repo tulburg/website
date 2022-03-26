@@ -1,5 +1,4 @@
 import {Container, Style, A, EM, P, H4, Animation} from "@js-native/core/components"
-import {Color} from "@js-native/core/types";
 import {Link} from "./config";
 import './assets/css/ms.css';
 
@@ -31,13 +30,6 @@ export default {
         textDecoration: 'underline'
       }
     })
-  }
-}
-
-export class Scene extends Container {
-  constructor(bgColor: Color) {
-    super();
-    this.size(['100vw', '100vh']).backgroundColor(bgColor);
   }
 }
 
