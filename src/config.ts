@@ -18,9 +18,9 @@ export default {
     }
   ],
   links: <Link[]>[
-    { name: 'about', url: '/' },
-    { name: 'contact', url: '/contact' },
     { name: 'blog', url: '/blog' },
+    { name: 'contact', url: '/contact' },
+    { name: 'showcase', url: '/showcase' },
     { name: 'interview', url: 'https://vokal.cc/tulburg' }
   ],
   footerLinks: <Link[]>[

@@ -4,19 +4,24 @@ import {Link} from "./config";
 
 export default class App extends PageComponent { 
 
+  middlePane: MiddlePane;
   constructor() {
     super();
-    
+    this.middlePane = new MiddlePane(
+      Config.slides, 
+      new Footer()
+    );
     this.addChild(
       new Layout(
         new LeftPane(Config.links),
-        new MiddlePane(
-          Config.slides, 
-          new Footer()
-        ),
+        this.middlePane,
         new Container()
       )
-    )
+    );
+  }
+
+  onCreate() {
+    this.middlePane.startAnim();
   }
 }
 
@@ -24,7 +29,7 @@ export default class App extends PageComponent {
 export class LeftPane extends Container {
   constructor(links: Link[]) {
     super();
-    const topLinks = new Container().height('16vh')
+    const topLinks = new Container().height('calc(100px + 4vh)')
       .display('flex').flexDirection('column');
     links.forEach(link => {
       if(link.name === 'interview') topLinks.addChild(
@@ -62,9 +67,31 @@ export class LeftPane extends Container {
 }
 
 export class MiddlePane extends Container {
+  slides: H1[];
+  slidesContainer: Container;
   constructor(slides: string[], footer: Footer) {
     super();
-    this.position('relative').marginTop('12vh').height('64vh').minHeight(680)
+    this.slides = slides.map(
+      slide => new H1().text(slide).fontSize(64).position('absolute')
+      .fontWeight('600').color(Theme.colors.white).transition('all .3s cubic-bezier(0.5, 1, 0.75, 1.5)')
+      .transform('translateX(-20px)').opacity('0')
+      .medias({
+        '(max-width: 3200px)': { fontSize: 64 },
+        '(max-width: 2000px)': { fontSize: 58 },
+        '(max-width: 1600px)': { fontSize: 54 },
+        '(max-width: 1200px)': { fontSize: 48 },
+        '(max-width: 840px)': { fontSize: 42 },
+        '(max-width: 700px)': { fontSize: 36 },
+        '(max-width: 640px)': { fontSize: 32 },
+        '(max-width: 560px)': { fontSize: 42 },
+        '(max-width: 520px)': { fontSize: 36 },
+        '(max-width: 460px)': { fontSize: 32 }
+      })
+    )
+    this.slides[0].transform('translateX(0)').opacity('1');
+    this.slidesContainer = new Container().position('relative')
+      .addChild(...this.slides)
+    this.position('relative').marginTop(100).minHeight(680)
       .display('flex').flexDirection('column').maxHeight(1000).width(800)  
       .medias({
         '(max-width: 3200px)': { width: 800 },
@@ -76,33 +103,26 @@ export class MiddlePane extends Container {
           width: 'calc(100vw - 80px)'
         }
       })
-      .addChild(
-        new Container().height('100%')
-          .global({
-            '*': { display: 'none', top: 0 },
-            ':nth-child(4)': { display: 'block' }
-          })
-          .addChild(
-            ...slides.map(
-              slide => new H1().text(slide).fontSize(64)
-              .fontWeight('600').color(Theme.colors.white)
-              .medias({
-                '(max-width: 3200px)': { fontSize: 64 },
-                '(max-width: 2000px)': { fontSize: 58 },
-                '(max-width: 1600px)': { fontSize: 54 },
-                '(max-width: 1200px)': { fontSize: 48 },
-                '(max-width: 840px)': { fontSize: 42 },
-                '(max-width: 700px)': { fontSize: 36 },
-                '(max-width: 640px)': { fontSize: 32 },
-                '(max-width: 560px)': { fontSize: 42 },
-                '(max-width: 520px)': { fontSize: 36 },
-                '(max-width: 460px)': { fontSize: 32 },
-                
-              })
-            )
-          ),
-        footer
-      )
+      .addChild(this.slidesContainer, footer)
+  }
+
+  startAnim() {
+    let index = 0, prev = 0;
+    const setSize = () => {
+      const maxHeight = Math.max.apply(null, this.slides.map(i => i.node().getBoundingClientRect().height));
+      this.slidesContainer.height(maxHeight + 64);
+    }
+    window.onresize = () => setSize();
+    setSize();
+    setInterval(() => {
+      index++;
+      if(index > this.slides.length - 1) index = 0;
+      if(prev !== undefined) {
+        this.slides[prev].transform('translateX(-20px)').opacity('0')
+      }
+      this.slides[index].transform('translateX(0)').opacity('1');
+      prev = index;
+    }, 7200);
   }
 }
 
