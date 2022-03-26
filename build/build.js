@@ -41,7 +41,7 @@ app.get('*', (req, res) =>
   res.sendFile(path.resolve(__dirname, '../dist/index.html'))
 )
 
-var uri = 'http://localhost:' + port;
+var uri = (process.env.HOST + ':' || 'http://localhost:') + port;
 var _resolve
 var readyPromise = new Promise(resolve => {
   _resolve = resolve

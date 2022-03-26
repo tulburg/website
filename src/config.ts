@@ -34,7 +34,7 @@ export default {
     'Serving as the tech backbone of startups in Nigeria, UK & Europe since 2012',
     'He’s what you get when an individual has eyes for beauty, both in code and in design',
     'Code? Yes! Design? Yes! Product scaling & design? Yes. Team vision & leadership? An affirmative YES!',
-    'Its like an instinct. Seems to understand how things work and in most cases, how they should work. Just who he is.'
+    'Its instinctinctive. He simply understands how things work and how they should work.'
   ],
   copyrightText: 'Copyright protected @ All Rights Reserved. 2022',
   statusText: 'Currently engaged. Unavailable til Aug. 2022'

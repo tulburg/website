@@ -1,4 +1,4 @@
-import {Container, Style, A, EM, P, H4, Animation} from "@js-native/core/components"
+import {Container, Style, A, EM} from "@js-native/core/components"
 import {Link} from "./config";
 import './assets/css/ms.css';
 
@@ -36,8 +36,14 @@ export default {
 export class Layout extends Container {
   constructor(...children: Container[]) {
     super();
-    this.display('grid').gridTemplateColumns('280px 720px auto')
-      .padding(80)
+    this.display('grid').gridTemplateColumns('auto auto 1fr')
+    .padding(80).medias({
+      '(max-width: 840px)': { padding: 40 },
+      '(max-width: 560px)': {
+        padding: 40,
+        gridTemplateColumns: '1fr'
+      }
+    })
     this.addChild(...children);
   }
 }
@@ -71,94 +77,5 @@ export class IconLink extends Container {
         }
       })
     )
-  }
-}
-
-export class LeftPane extends Container {
-  constructor(links: Link[]) {
-    super();
-    const topLinks = new Container().height(200)
-      .display('flex').flexDirection('column');
-    links.forEach(link => {
-      if(link.name === 'interview') topLinks.addChild(
-        new TopLink(link, { new_tab: true }).color(Theme.colors.white)
-      )
-      else topLinks.addChild(
-        new TopLink(link).color(Theme.colors.white)
-      )
-    });
-    const arrowStyles = new Style({
-      fontSize: 32, color: Theme.colors.text
-    }).pseudo({
-      ':before': {
-        marginLeft: 0
-      }
-    });
-    const arrowAnim = new Animation({
-      '0%': { transform: 'translateX(4px)' },
-      '50%': { transform: 'translateX(8px) scale(0.8)' },
-      '100%': { transform: 'translateX(12px)'}
-    });
-    const arrows = new Container()
-      .position('relative').height('100%').addChild(
-        new EM().addClassName('icon-arrow').marginLeft(-8).styles(arrowStyles),
-        new EM().addClassName('icon-arrow').opacity('0.7')
-          .marginLeft(-32).styles(arrowStyles).position('relative')
-          .display('inline-block')
-          .animation(arrowAnim.name + ' 1s cubic-bezier(0, 0.5, 0.1, 0.25) infinite forwards ')
-      );
-    this.display('flex').flexDirection('column')
-      .addChild(topLinks, arrows);
-  }
-}
-
-
-export class Footer extends Container {
-  constructor() {
-    super();
-    const footerTextStyle = new Style({
-      color: Theme.colors.text, fontSize: 12, maxWidth: 150
-    })
-    this.addChild(
-      new H4().text('Tolu Oluwagbemi').fontSize(20).fontWeight('500')
-        .color(Theme.colors.white).marginBottom(32).gridArea('1/1/3/3'),
-      new Container().display('grid').gridTemplateColumns('440px auto')
-        .gap(8)
-        .addChild(
-          ...Config.footerLinks.map((link: Link) => {
-            if(link.name.match('@')) return new IconLink(link).global({
-              'em': { visibility: 'hidden' }
-            })
-            else return new IconLink(link)
-          }),
-        ),
-      new Container().display('grid').gridTemplateColumns('440px auto')
-        .marginTop(150).gap(8)
-        .addChild(
-          new P().text(Config.copyrightText).styles(footerTextStyle), 
-          new P().text(Config.statusText).styles(footerTextStyle)
-        )
-    )
-  }
-}
-
-export class MiddlePane extends Container {
-  constructor(slides: string[], footer: Footer) {
-    super();
-    this.position('relative').marginTop(160).height('45vh')
-      .display('flex').flexDirection('column') 
-      .addChild(
-        new Container().height('100%')
-          .global({
-            '*': { display: 'none' },
-            ':first-child': { display: 'block' }
-          })
-          .addChild(
-            ...slides.map(slide => new P().text(slide).fontSize(48)
-                        .fontWeight('500').color(Theme.colors.white)
-                       .position('absolute'))
-          ),
-        footer
-      )
   }
 }
